@@ -1,0 +1,62 @@
+{
+  "name": "url-attack-detector",
+  "version": "1.0.1",
+  "description": "An AI-powered desktop application to detect malicious URLs",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "author": "Antigravity",
+  "license": "ISC",
+  "build": {
+    "appId": "com.urlattackdetector.desktop",
+    "productName": "URL Attack Detector App",
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico",
+      "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "files": [
+      "**/*",
+      "!dist*",
+      "!dist_new**",
+      "!dist/**",
+      "!release**"
+    ],
+    "directories": {
+      "output": "release",
+      "app": ".",
+      "buildResources": "build"
+    },
+    "forceCodeSigning": false,
+    "asar": false,
+    "extraResources": [
+      {
+        "from": "../target",
+        "to": "backend",
+        "filter": [
+          "url-attack-detector-0.0.1-SNAPSHOT.jar"
+        ]
+      },
+      {
+        "from": "../ml_service",
+        "to": "ml_service",
+        "filter": [
+          "**/*",
+          "!__pycache__/**"
+        ]
+      }
+    ]
+  },
+  "devDependencies": {
+    "electron": "^40.8.3",
+    "electron-builder": "^26.8.1"
+  }
+}

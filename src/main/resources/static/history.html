@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan History - URL Attack Detector</title>
+    <!-- Modern Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding-top: 80px; /* Space for navbar */
+        }
+
+        /* Navbar styles to match index.html */
+        .navbar-custom {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .main-container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .detector-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border: none;
+            overflow: hidden;
+            padding: 30px;
+        }
+
+        .table-custom {
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .table-custom thead th {
+            border: none;
+            color: #6c757d;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table-custom tbody tr {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+
+        .table-custom tbody tr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .table-custom tbody td {
+            background: #fff;
+            border: solid 1px transparent;
+            border-style: solid none;
+            padding: 15px;
+            vertical-align: middle;
+        }
+
+        .table-custom tbody td:first-child {
+            border-left-style: solid;
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+
+        .table-custom tbody td:last-child {
+            border-right-style: solid;
+            border-bottom-right-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .truncate-url {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/index.html">
+                <i class="fas fa-shield-alt me-2 text-info"></i>Attack Detector
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/index.html"><i class="fas fa-search me-1"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active fw-bold" href="#"><i class="fas fa-history me-1"></i> Scan History</a>
+                    </li>
+                    <li class="nav-item ms-lg-3">
+                        <button class="btn btn-outline-light btn-sm rounded-pill px-3" onclick="logout()">
+                            <i class="fas fa-sign-out-alt me-1"></i> Logout <span id="navUsername"></span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-container">
+        <div class="detector-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold m-0"><i class="fas fa-list text-primary me-2"></i>Your Scan History</h3>
+                <button class="btn btn-light border" onclick="fetchHistory()"><i class="fas fa-sync-alt"></i></button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-custom">
+                    <thead>
+                        <tr>
+                            <th>URL Scanned</th>
+                            <th>Prediction</th>
+                            <th>Attack Type</th>
+                            <th>Risk Level</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="loading" class="text-center text-muted my-5">
+                <div class="spinner-border spinner-border-sm me-2" role="status"></div> Loading history...
+            </div>
+            <div id="emptyState" class="text-center text-muted my-5" style="display: none;">
+                <i class="fas fa-folder-open fs-1 mb-3 opacity-50"></i>
+                <h5>No scan history found.</h5>
+                <p>Go to the dashboard and scan some URLs to see them here.</p>
+                <a href="/index.html" class="btn btn-primary mt-2">Scan Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Authentication Check
+        const userId = localStorage.getItem('userId');
+        const username = localStorage.getItem('username');
+
+        if (!userId) {
+            window.location.href = '/login.html';
+        } else {
+            document.getElementById('navUsername').textContent = '(' + username + ')';
+        }
+
+        function logout() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
+            window.location.href = '/login.html';
+        }
+
+        async function fetchHistory() {
+            const tableBody = document.getElementById('historyTableBody');
+            const loading = document.getElementById('loading');
+            const emptyState = document.getElementById('emptyState');
+            
+            tableBody.innerHTML = '';
+            loading.style.display = 'block';
+            emptyState.style.display = 'none';
+
+            try {
+                const response = await fetch(`/api/history/${userId}`);
+                const history = await response.json();
+                
+                loading.style.display = 'none';
+
+                if (history.length === 0) {
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                history.forEach(item => {
+                    const row = document.createElement('tr');
+                    
+                    // Format Date
+                    const date = new Date(item.scannedAt);
+                    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    
+                    // Badges
+                    const isMalicious = item.prediction === 'Malicious';
+                    const predictionBadge = isMalicious ? 
+                        `<span class="badge bg-danger"><i class="fas fa-exclamation-triangle me-1"></i>Malicious</span>` : 
+                        `<span class="badge bg-success"><i class="fas fa-check-circle me-1"></i>Safe</span>`;
+                    
+                    const attackTypeLabel = isMalicious ? item.attackType : '-';
+                    
+                    let riskBadge = '-';
+                    if (isMalicious) {
+                        if (item.riskLevel === 'High') riskBadge = `<span class="text-danger fw-bold"><i class="fas fa-fist-raised me-1"></i>High</span>`;
+                        else riskBadge = `<span class="text-warning fw-bold"><i class="fas fa-exclamation me-1"></i>Medium</span>`;
+                    }
+
+                    row.innerHTML = `
+                        <td><span class="truncate-url" title="${item.url}">${item.url}</span></td>
+                        <td>${predictionBadge}</td>
+                        <td class="${isMalicious ? 'fw-bold' : ''}">${attackTypeLabel}</td>
+                        <td>${riskBadge}</td>
+                        <td class="text-muted small">${formattedDate}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (err) {
+                loading.style.display = 'none';
+                console.error('Failed to fetch history', err);
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Failed to load history from server.</td></tr>`;
+            }
+        }
+
+        // Fetch history on load
+        fetchHistory();
+    </script>
+</body>
+
+</html>

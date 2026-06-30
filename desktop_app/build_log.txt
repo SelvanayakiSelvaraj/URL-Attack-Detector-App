@@ -1,0 +1,46 @@
+  • electron-builder  version=26.8.1 os=10.0.26200
+  • loaded configuration  file=package.json ("build" field)
+  • Specified application directory equals to project dir — superfluous or wrong configuration  appDirectory=.
+  • executing @electron/rebuild  electronVersion=40.8.3 arch=x64 buildFromSource=false workspaceRoot=C:\Users\nayak\OneDrive\Desktop\url-attack-detector\desktop_app projectDir=./ appDir=./
+  • installing native dependencies  arch=x64
+  • completed installing native dependencies
+  • packaging       platform=win32 arch=x64 electron=40.8.3 appOutDir=release\win-unpacked
+  • asar usage is disabled — this is strongly not recommended  solution=enable asar and use asarUnpack to unpack files that must be externally available
+  • searching for node modules  pm=npm searchDir=C:\Users\nayak\OneDrive\Desktop\url-attack-detector\desktop_app
+(node:7460) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  • searching for node modules  pm=traversal searchDir=C:\Users\nayak\OneDrive\Desktop\url-attack-detector\desktop_app
+  • using manual traversal of node_modules to build dependency tree
+  • no node modules returned while searching directories  searchDirectories=[""]
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Scripts\f2py.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Scripts\flask.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Scripts\numpy-config.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Scripts\pip3.14.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Scripts\pip.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Scripts\pip3.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Scripts\pythonw.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Scripts\waitress-serve.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Scripts\python.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Lib\site-packages\pip\_vendor\distlib\t64-arm.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Lib\site-packages\pip\_vendor\distlib\t32.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Lib\site-packages\pip\_vendor\distlib\t64.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Lib\site-packages\pip\_vendor\distlib\w32.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Lib\site-packages\pip\_vendor\distlib\w64-arm.exe
+  • signing with signtool.exe  path=release\win-unpacked\resources\ml_service\venv\Lib\site-packages\pip\_vendor\distlib\w64.exe
+  • asar usage is disabled — this is strongly not recommended  solution=enable asar and use asarUnpack to unpack files that must be externally available
+  • default Electron icon is used  reason=application icon is not set
+  • signing with signtool.exe  path=release\win-unpacked\URL Attack Detector App.exe
+  • building        target=nsis file=release\URL Attack Detector App Setup 1.0.1.exe archs=x64 oneClick=false perMachine=false
+  • signing with signtool.exe  path=release\win-unpacked\resources\elevate.exe
+  • signing with signtool.exe  path=release\URL Attack Detector App Setup 1.0.1.__uninstaller.exe
+  • signing with signtool.exe  path=release\URL Attack Detector App Setup 1.0.1.exe
+  • building block map  blockMapFile=release\URL Attack Detector App Setup 1.0.1.exe.blockmap
+  ⨯ EBUSY: resource busy or locked, unlink 'C:\Users\nayak\OneDrive\Desktop\url-attack-detector\desktop_app\release\url-attack-detector-1.0.1-x64.nsis.7z'  failedTask=build stackTrace=Error: EBUSY: resource busy or locked, unlink 'C:\Users\nayak\OneDrive\Desktop\url-attack-detector\desktop_app\release\url-attack-detector-1.0.1-x64.nsis.7z'
+    at Object.unlink (node:internal/fs/promises:1068:10)
+    at async Promise.all (index 0)
+    at AppPackageHelper.finishBuild (C:\Users\nayak\OneDrive\Desktop\url-attack-detector\desktop_app\node_modules\app-builder-lib\src\targets\nsis\nsisUtil.ts:106:5)
+    at NsisTarget.finishBuild (C:\Users\nayak\OneDrive\Desktop\url-attack-detector\desktop_app\node_modules\app-builder-lib\src\targets\nsis\NsisTarget.ts:166:7)
+    at Packager.doBuild (C:\Users\nayak\OneDrive\Desktop\url-attack-detector\desktop_app\node_modules\app-builder-lib\src\packager.ts:570:7)
+    at executeFinally (C:\Users\nayak\OneDrive\Desktop\url-attack-detector\desktop_app\node_modules\builder-util\src\promise.ts:12:14)
+    at Packager.build (C:\Users\nayak\OneDrive\Desktop\url-attack-detector\desktop_app\node_modules\app-builder-lib\src\packager.ts:458:31)
+    at executeFinally (C:\Users\nayak\OneDrive\Desktop\url-attack-detector\desktop_app\node_modules\builder-util\src\promise.ts:12:14)
