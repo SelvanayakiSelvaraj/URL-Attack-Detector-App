@@ -73,3 +73,15 @@ ml_service/node_modules/
 *.jar
 *.7z
 *.zip
+
+# Sensitive Files
+.env
+
+# Unwanted Scripts
+Deep_Clean.bat
+Delete_Antigravity.bat
+create_zip.bat
+build_app.bat
+launch_hidden.vbs
+launch_silent.bat
+fast_build.bat
