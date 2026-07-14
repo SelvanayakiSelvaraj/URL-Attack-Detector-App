@@ -58,7 +58,7 @@ wheels/
 .venv
 venv/
 venv.bak/
-model/
+ml_service/model/
 !ml_service/model/.gitkeep
 
 node_modules/
