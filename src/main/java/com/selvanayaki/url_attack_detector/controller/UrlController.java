@@ -81,7 +81,15 @@ public class UrlController {
             ObjectMapper mapper = new ObjectMapper();
             
             // Re-parse the response to add IP Address
-            com.fasterxml.jackson.databind.node.ObjectNode jsonResponse = (com.fasterxml.jackson.databind.node.ObjectNode) mapper.readTree(responseString);
+            com.fasterxml.jackson.databind.node.ObjectNode jsonResponse;
+            try {
+                jsonResponse = (com.fasterxml.jackson.databind.node.ObjectNode) mapper.readTree(responseString);
+            } catch (Exception ex) {
+                // If it fails to parse as JSON, it's likely an HTML error page from Render or Flask.
+                // We truncate it to 200 chars so it fits in the error message.
+                String snippet = responseString.length() > 200 ? responseString.substring(0, 200) + "..." : responseString;
+                throw new Exception("ML Service returned non-JSON response (HTTP " + responseCode + "): " + snippet);
+            }
             jsonResponse.put("ip_address", ipAddress);
             responseString = jsonResponse.toString();
 
