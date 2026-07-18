@@ -125,4 +125,30 @@ public class UrlController {
             return ResponseEntity.status(500).body(errorResponse);
         }
     }
+
+    @PostMapping("/api/url/save-history")
+    public ResponseEntity<?> saveHistory(@RequestBody java.util.Map<String, Object> payload) {
+        try {
+            Long userId = payload.containsKey("userId") ? Long.parseLong(payload.get("userId").toString()) : null;
+            if (userId == null) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("error", "User ID is required"));
+            }
+
+            String url = payload.getOrDefault("url", "Unknown").toString();
+            String prediction = payload.getOrDefault("prediction", "Unknown").toString();
+            String attackType = payload.getOrDefault("attack_type", "None").toString();
+            String riskLevel = payload.getOrDefault("risk_level", "Unknown").toString();
+
+            Optional<User> userOpt = userRepository.findById(userId);
+            if (userOpt.isPresent()) {
+                ScanHistory history = new ScanHistory(url, prediction, attackType, riskLevel, userOpt.get());
+                scanHistoryRepository.save(history);
+                return ResponseEntity.ok(java.util.Map.of("message", "History saved successfully"));
+            } else {
+                return ResponseEntity.status(404).body(java.util.Map.of("error", "User not found"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(java.util.Map.of("error", "Failed to save history: " + e.getMessage()));
+        }
+    }
 }

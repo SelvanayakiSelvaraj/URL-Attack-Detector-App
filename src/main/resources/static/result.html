@@ -202,21 +202,46 @@
             const resultContainer = document.getElementById('resultContainer');
 
             try {
-                // Call Spring Boot API Endpoint, passing userId
-                const response = await fetch(`/analyze-url?url=${encodeURIComponent(targetUrl)}&userId=${currentUserId}`);
-                const data = await response.json();
+                // 1. Call Python ML Service directly
+                const mlResponse = await fetch('https://url-attack-detector-app.onrender.com/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: targetUrl })
+                });
+                
+                const data = await mlResponse.json();
 
                 loaderContainer.style.display = 'none';
 
-                if (response.status !== 200 || data.error) {
-                    alert(data.error || 'Server responded with an error.');
+                if (mlResponse.status !== 200 || data.error) {
+                    alert(data.error || 'ML Server responded with an error.');
                     window.location.href = '/index.html';
                     return;
+                }
+                
+                // Extract IP Address (mocked or retrieved from a separate service)
+                data.ip_address = "Fetched by Client";
+
+                // 2. Call Java Spring Boot Service to save history
+                try {
+                    await fetch('https://url-attack-detector-web.onrender.com/api/url/save-history', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userId: currentUserId,
+                            url: data.url,
+                            prediction: data.prediction,
+                            attack_type: data.attack_type,
+                            risk_level: data.risk_level
+                        })
+                    });
+                } catch (saveErr) {
+                    console.error("Failed to save history:", saveErr);
                 }
 
                 // Bind Basic Data
                 document.getElementById('resultUrl').textContent = data.url;
-                document.getElementById('resultIp').textContent = data.ip_address || "Unknown";
+                document.getElementById('resultIp').textContent = data.ip_address;
 
                 const titleTextEl = document.getElementById('predictionText');
                 const iconEl = document.getElementById('predictionIcon');
